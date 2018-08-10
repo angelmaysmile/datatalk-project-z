@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import Imputer
 
-score_hg = pd.read_csv("diem_thi_ha_giang.csv")
+score_hg = pd.read_csv("Examination Result 2017/diem_thi_ha_giang.csv")
 score_hg.head()
 
 print("Shape of data:", score_hg.shape)
@@ -22,42 +22,19 @@ score_hg_drop_hist = score_hg.drop('LICH SU', axis=1)
 score_hg_drop_hist.head()
 
 # MNAR: it's not allowed to delete the missing data
-# Use Time Series
-# Linear regression
-# Multiple imputation
-# K near neighbors
+# Linear regression: missing data - dependent variables. Independent variables can be the score of other subjects
+# Multiple imputation: impute data from a distribution to the missing datas and consolidate the results
+# K nearest neighbors: requires a distance metric and selection of the number of nearest neighbors to impute the data
 # Mean, Median and Mode
-# Mean
-score_hg_math_mean = score_hg
-score_math = score_hg_math_mean.TOAN
+score_hg_math = score_hg
+score_math = score_hg_math.TOAN
 imputer = Imputer(missing_values=float('NaN'), strategy='mean')
+# imputer = Imputer(missing_values=float('NaN'), strategy='median')
+# imputer = Imputer(missing_values=float('NaN'), strategy='most_frequent')
 score_math = score_math.values.reshape(-1, 1)
 transformed_score_math = imputer.fit_transform(score_math)
-score_hg_math_mean.TOAN = pd.Series(transformed_score_math.tolist())
-score_hg_math_mean.TOAN = score_hg_math_mean.TOAN.apply(lambda x: list(x)[0])
+score_hg_math.TOAN = pd.Series(transformed_score_math.tolist())
+score_hg_math.TOAN = score_hg_math.TOAN.apply(lambda x: list(x)[0])
 
-score_hg_math_mean.describe()
-
-# Median
-score_hg_math_median = score_hg
-score_math = score_hg_math_median.TOAN
-imputer = Imputer(missing_values=float('NaN'), strategy='median')
-score_math = score_math.values.reshape(-1, 1)
-transformed_score_math = imputer.fit_transform(score_math)
-score_hg_math_median.TOAN = pd.Series(transformed_score_math.tolist())
-score_hg_math_median.TOAN = score_hg_math_median.TOAN.apply(lambda x: list(x)[0])
-
-score_hg_math_median.describe()
-
-# Mode
-score_hg_math_mode = score_hg
-score_math = score_hg_math_mode.TOAN
-imputer = Imputer(missing_values=float('NaN'), strategy='most_frequent')
-score_math = score_math.values.reshape(-1, 1)
-transformed_score_math = imputer.fit_transform(score_math)
-score_hg_math_mode.TOAN = pd.Series(transformed_score_math.tolist())
-score_hg_math_mode.TOAN = score_hg_math_mode.TOAN.apply(lambda x: list(x)[0])
-
-score_hg_math_mode.describe()
-
+print(score_hg_math_mean.describe())
 
